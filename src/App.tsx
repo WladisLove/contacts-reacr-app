@@ -1,37 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import './App.css';
+import uniqid from 'uniqid'
 import ContactList, { ContactItem } from './components/ContactsList';
-import ContactForm, { FieldConfig } from './components/ContactForm/index';
+import ConfigurableForm from './components/ConfigurableForm/index';
 import Modal from './components/Modal/index';
-
-const fieldsConfig: FieldConfig[] = [{
-  label: 'First Name',
-  name: 'firstName',
-  required: true,
-  errorMessage: 'Enter correct First Name'
-}, {
-  label: 'Last Name',
-  name: 'lastName',
-  required: true,
-  errorMessage: 'Enter correct Last Name'
-}, {
-  label: 'Date of Birth',
-  name: 'dob',
-  type: 'date',
-  required: true,
-  errorMessage: 'Enter correct Date of Birth'
-}, {
-  label: 'Phone Number',
-  name: 'phone',
-  type: 'tel',
-  required: true,
-  errorMessage: 'Enter correct Phone Number'
-}, {
-  label: 'E-mail',
-  name: 'email',
-  type: 'email',
-  errorMessage: 'Enter correct E-mail'
-}]
+import { formConfig } from './formConfig';
+import './App.css';
 
 function App() {
   const [contacts, setContacts] = useState<ContactItem[]>([])
@@ -54,7 +27,8 @@ function App() {
   useEffect(() => saveLocalContacts(), [contacts.length])
 
   const addContact = (obj: object) => {
-    const newContact = obj as ContactItem
+    // create a new contact using form's fields and uniq ID
+    const newContact = { ...obj, id: uniqid.time() } as ContactItem
     setContacts([...contacts, newContact])
     hideForm()
   }
@@ -72,8 +46,8 @@ function App() {
 
       <Modal visible={formVisible} onClose={hideForm}>
         <div style={{display: 'flex', justifyContent: 'center'}}>
-          <ContactForm
-            fields={fieldsConfig}
+          <ConfigurableForm
+            fields={formConfig}
             onSubmit={addContact} />
         </div>
       </Modal>

@@ -1,7 +1,7 @@
 import React from 'react'
-import { FieldConfig } from './index'
+import IFieldConfig from './IFieldConfig'
 
-const FormField: React.FC<FieldConfig & React.HTMLProps<HTMLInputElement>> = ({
+const FormField: React.FC<IFieldConfig & React.HTMLProps<HTMLInputElement>> = ({
   label, type, errorMessage, ...restProps
 }) => {
   return (

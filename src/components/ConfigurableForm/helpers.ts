@@ -1,7 +1,7 @@
-import { ErrorsType, FieldConfig } from "."
+import IFieldConfig, { ErrorsType } from "./IFieldConfig"
 
 // find an error in field-config or generate an error when field is required
-export const findFieldError = (fieldName: string, fieldsSettings: FieldConfig[]): string => {
+export const findFieldError = (fieldName: string, fieldsSettings: IFieldConfig[]): string => {
   const { errorMessage = '', required, label } = fieldsSettings.find(el => el.name === fieldName) ?? {}
   return errorMessage
     ? `${errorMessage}${required ? ' (required)' : ''}`

@@ -1,35 +1,40 @@
 import React from 'react'
-import uniqid from 'uniqid'
 import FormField from './FormField'
 import { findFieldError, isEmailValid, isTelValid, updateErrorState } from './helpers'
+import IFieldConfig, { ErrorsType } from './IFieldConfig'
 import './styles.css'
 
-export type FieldType = 'text' | 'tel' | 'date' | 'email'
-export type ErrorsType = string
+/*
+  To use ConfigurableForm in app:
 
-export interface FieldConfig {
-  label: string
-  name: string
-  type?: FieldType
-  required?: boolean
-  errorMessage?: string
-}
+    <ConfigurableForm
+      fields={arrayWithFieldsConfigs}
+      onSubmit={submitHandler}
+      submitLabel="Text of submit button"/>
+*/
 
 interface Props {
-  fields: FieldConfig[]
+  /* (required) array of fields' configurations */
+  fields: IFieldConfig[]
+  /* (required) action to get an object with all fields values (in format: fieldName-fieldValue)
+      is called when form is submitted */
   onSubmit: (a: object) => void
+  /* string value to set custom submit button's label */
   submitLabel?: string
 }
 
 interface State {
+  /* array with errors */
   errors: ErrorsType[]
+  /* number of unfilled required fields */
   unfilledRequiredFieldsNum: number
+  /* object for storing fields values (form state) */
   fields: {
     [key: string]: string
   }
 }
 
-function getInitialState(fieldsConfig: FieldConfig[]): State {
+function getInitialState(fieldsConfig: IFieldConfig[]): State {
   // count number of required fields
   const unfilledRequiredFieldsNum = fieldsConfig.reduce((val, { required }) => required ? val + 1 : val, 0)
   return {
@@ -39,7 +44,9 @@ function getInitialState(fieldsConfig: FieldConfig[]): State {
   }
 }
 
-class ContactForm extends React.Component<Props, State> {
+// due to complex manipulations with state in changeHandler 
+// it was decided to leave ConfigurableForm as class component
+  class ConfigurableForm extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = getInitialState(props.fields)
@@ -51,9 +58,7 @@ class ContactForm extends React.Component<Props, State> {
 
   submitHandler = (e: React.FormEvent) => {
     e.preventDefault()
-    // create a new contact using form's fields and uniq ID
-    const contact = { ...this.state.fields, id: uniqid.time() }
-    this.props.onSubmit(contact)
+    this.props.onSubmit(this.state.fields)
     this.resetForm()
   }
 
@@ -121,4 +126,4 @@ class ContactForm extends React.Component<Props, State> {
   }
 }
 
-export default ContactForm
+export default ConfigurableForm
